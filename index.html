@@ -247,7 +247,7 @@ h1 .b{color:var(--blue)}h1 .o{color:var(--orange)}h1 .g{color:var(--green)}
 .tyfb .tyans{background:var(--cbg);border-radius:8px;padding:0 8px}
 .tyhow b.rm{background:var(--cbg);border-radius:8px;padding:0 8px}
 /* タブが8つになったので、少しつめる */
-@media (min-width:761px){.tabs .tab{padding:7px 6px;line-height:1.25}}
+@media (min-width:761px){.tabs .tab{padding:7px 4px;line-height:1.25;font-size:.95rem}}
 
 /* ⑤ キーボードの図（次にうつキーが光る） */
 .tylow{display:flex;align-items:center;justify-content:center;gap:24px;width:min(1120px,100%)}
@@ -330,6 +330,38 @@ h1 .b{color:var(--blue)}h1 .o{color:var(--orange)}h1 .g{color:var(--green)}
 .nmparts{display:flex;flex-direction:column;gap:6px;align-items:center}
 .nmnote{margin:0;font-size:.95rem;line-height:1.6;font-weight:700}
 
+/* ⑧ 言葉の練習（正しいほうをえらぶ） */
+.tabs .tab.pick{background:var(--green-bg);color:var(--green)}
+.tabs .tab.pick small{color:var(--green)}
+.tabs .tab.pick[aria-selected="true"]{background:var(--green);color:#fff}
+.tabs .tab.pick[aria-selected="true"] small{color:#fff}
+.tabs .tab.pick[aria-selected="true"]::after{display:none}
+.pkbar .rpg{margin-left:auto}
+.pkscore{font-weight:800;font-size:1.05rem;color:var(--ink-soft);white-space:nowrap}
+.pkscore b{color:var(--red);font-size:1.25em}
+.pk{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:14px}
+.pkcard{display:grid;grid-template-columns:auto 1fr;grid-template-rows:1fr auto;align-items:center;column-gap:20px;row-gap:6px;padding:12px 22px;border-left:8px solid var(--c);min-height:0}
+.pkw{display:flex;align-items:center;gap:12px;font-size:clamp(1.5rem,2.8vw,2.2rem);font-weight:800;line-height:1.3}
+.pkw rt{font-size:.45em}
+.pkn{font-size:.62em;width:1.7em;height:1.7em;border-radius:50%;border:2px solid var(--c);color:var(--c);display:grid;place-items:center;flex:none}
+.pkopts{display:flex;flex-direction:column;gap:8px;border-left:3px solid #c9d3dc;border-radius:16px;padding:4px 0 4px 14px}
+.pko{display:flex;align-items:center;gap:10px;border:0;background:#fff;border-radius:12px;padding:4px 14px;box-shadow:0 2px 6px rgba(40,60,80,.08);
+  text-align:left;transition:transform .15s,background .25s,opacity .25s}
+.pko:hover{transform:translateX(3px)}
+.pkb{display:inline-flex;align-items:center;font-size:1.5rem;font-weight:500;color:var(--blue)}
+.pkm{display:inline-grid;place-items:center;width:2.2em;height:1.6em;font-style:normal;font-weight:800}
+.pkm.ok::before{content:'○';color:var(--red);font-size:1.25em;animation:fade .3s ease}
+.pkm.ng::before{content:'×';color:var(--ink-soft);font-size:1.1em;animation:fade .3s ease}
+.pkr{font-size:clamp(1.4rem,2.6vw,2rem);font-weight:700}
+.pkcard.done .pko{cursor:default}
+.pkcard.done .pko:hover{transform:none}
+.pko.right{background:#fff1ee}
+.pko.wrong{opacity:.55}
+.pkex{grid-column:1 / -1;font-size:.98rem;font-weight:700;line-height:1.5;min-height:1.5em;color:var(--ink-soft)}
+.pkex.show{animation:fade .35s ease}
+.pkex b{color:var(--red)}
+.pkex .rm{color:var(--c);font-size:1.1em}
+
 /* ===== 重要語句（ひな形1・つなぐ言葉と同じつくり：12まいずつ） ===== */
 .wdocs{flex:1;display:grid;grid-template-columns:1.6fr 1fr;gap:.55rem;min-height:0}
 .wboard{position:relative;background:var(--wcard);border:1px solid var(--wline);border-radius:14px;padding:.5rem;
@@ -410,6 +442,8 @@ h1 .b{color:var(--blue)}h1 .o{color:var(--orange)}h1 .g{color:var(--green)}
   .wdocs{grid-template-columns:1fr;grid-template-rows:minmax(420px,1.9fr) auto;flex:none}
   .wgrid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr))}
   .kt,.nm{grid-template-columns:1fr;flex:none}
+  .pk{grid-template-columns:1fr;grid-auto-rows:auto;flex:none}
+  .pkbar .rpg{margin-left:0}
   .ktab{grid-template-columns:2.4rem repeat(var(--vn,5),minmax(0,1fr));grid-auto-rows:52px;padding:8px}
   .ktc{flex-direction:column;gap:0}
   .ktab{grid-auto-rows:minmax(52px,auto)}
@@ -484,6 +518,7 @@ const TABS = [
   {view:'type',   tab:'⑤ キーボードでうとう', sub:'ローマ字入力'},
   {view:'table',  tab:'⑥ ローマ字の表',     sub:'教科書164ページ'},
   {view:'name',   tab:'⑦ 名前を書こう',     sub:'人名の書き方'},
+  {view:'pick',   tab:'⑧ 言葉の練習',       sub:'正しいほうに○'},
   {view:'words',  tab:'重要語句',           sub:'ことばのいみ'}
 ];
 
@@ -1037,6 +1072,68 @@ VIEWS.name = function(){
   $('#nmReset').onclick=()=>{nmF='';nmG='';nmShow=false;VIEWS.name();$('#nmF').focus();};
   [fI,gI].forEach(el=>el.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.isComposing){e.preventDefault(); if(el===fI&&!gI.value)gI.focus(); else go(false);} }));
   if(nmShow)go(true);
+};
+
+/* ---- ⑧ 言葉の練習（正しいほうに○） ----
+   1まとまり＝1画面の4問。o＝2つの書き方、a＝正しいほうの番号（0か1）、e＝答えたあとに出る説明 */
+const PICK = [
+  [ {w:'おじいさん', o:['ozisan','ozîsan'], a:1, e:'「じい」とのばすので「<span class="rm">î</span>」をつける。'},
+    {w:'<ruby>金曜<rt>きんよう</rt></ruby>', o:['kin’yô','kinyô'], a:0, e:'「n」の次が「y」なので「’」を入れる。「kinyô」だと「きにょう」と読めてしまう。'},
+    {w:'<ruby>社会<rt>しゃかい</rt></ruby>', o:['syakai','siyakai'], a:0, e:'「しゃ」は「y」を入れた3文字で「<span class="rm">sya</span>」。'},
+    {w:'ロケット', o:['roketuto','roketto'], a:1, e:'「っ」は、次の「to」の最初の文字「t」を重ねて「<span class="rm">tt</span>」。'} ],
+  [ {w:'<ruby>数学<rt>すうがく</rt></ruby>', o:['sûgaku','sugaku'], a:0, e:'「すう」とのばすので「<span class="rm">û</span>」をつける。'},
+    {w:'<ruby>千円<rt>せんえん</rt></ruby>', o:['senen','sen’en'], a:1, e:'「senen」だと「せねん」と読めてしまう。「n」と「e」の間に「’」を入れる。'},
+    {w:'<ruby>茶色<rt>ちゃいろ</rt></ruby>', o:['tyairo','tiyairo'], a:0, e:'「ちゃ」は「y」を入れた3文字で「<span class="rm">tya</span>」。'},
+    {w:'<ruby>作家<rt>さっか</rt></ruby>', o:['satuka','sakka'], a:1, e:'「っ」は、次の「ka」の最初の文字「k」を重ねて「<span class="rm">kk</span>」。'} ],
+  [ {w:'ボール', o:['bôru','boru'], a:0, e:'「ー」でのばす音も、「<span class="rm">ô</span>」のように「^」をつける。'},
+    {w:'<ruby>船員<rt>せんいん</rt></ruby>', o:['sen’in','senin'], a:0, e:'「senin」だと「せにん」と読めてしまう。「n」と「i」の間に「’」を入れる。'},
+    {w:'<ruby>旅行<rt>りょこう</rt></ruby>', o:['riyokô','ryokô'], a:1, e:'「りょ」は「<span class="rm">ryo</span>」、「こう」はのばすので「<span class="rm">kô</span>」。'},
+    {w:'ネット', o:['neto','netto'], a:1, e:'「っ」は、次の「to」の最初の文字「t」を重ねて「<span class="rm">tt</span>」。'} ],
+  [ {w:'<ruby>遠<rt>とお</rt></ruby>い', o:['tôi','toi'], a:0, e:'「とお」とのばすので「<span class="rm">ô</span>」をつける。'},
+    {w:'<ruby>本読<rt>ほんよ</rt></ruby>み', o:['honyomi','hon’yomi'], a:1, e:'「honyomi」だと「ほにょみ」と読めてしまう。「n」と「y」の間に「’」を入れる。'},
+    {w:'<ruby>貯金<rt>ちょきん</rt></ruby>', o:['tiyokin','tyokin'], a:1, e:'「ちょ」は「y」を入れた3文字で「<span class="rm">tyo</span>」。'},
+    {w:'ベッド', o:['beddo','betudo'], a:0, e:'「っ」は、次の「do」の最初の文字「d」を重ねて「<span class="rm">dd</span>」。'} ]
+];
+let pkPg=0, pkAns=PICK.map(p=>p.map(()=>-1));
+/* タブのボタンを緑にする（タブができたあとに、⑧のボタンへ class を足す） */
+setTimeout(()=>{ const i=TABS.findIndex(t=>t.view==='pick'); const b=document.querySelectorAll('.tabs .tab')[i]; if(b)b.classList.add('pick'); },0);
+VIEWS.pick = function(){
+  const P=PICK[pkPg], A=pkAns[pkPg];
+  const allOK=p=>pkAns[p].every((x,i)=>x===PICK[p][i].a);
+  const score=()=>A.every(x=>x>=0)?`<span class="pkscore">${P.length}もん中 <b>${A.filter((x,i)=>x===P[i].a).length}</b>もん せいかい</span>`:'';
+  const card=(q,i)=>{
+    const ch=A[i], done=ch>=0;
+    return `<div class="box pkcard ${COLORS[i%3]} ${done?'done':''}" data-i="${i}">
+      <div class="pkw"><span class="pkn">${i+1}</span><span>${q.w}</span></div>
+      <div class="pkopts">${q.o.map((o,j)=>{
+        const m=!done?'':(j===q.a?'ok':(j===ch?'ng':''));
+        const cls=!done?'':(j===q.a?'right':'wrong');
+        return `<button class="pko ${cls}" data-j="${j}"><span class="pkb">(<i class="pkm ${m}"></i>)</span><span class="pkr rm">${o}</span></button>`;}).join('')}</div>
+      <div class="pkex ${done?'show':''}">${done?(ch===q.a?'<b>せいかい！</b>　':'<b>ざんねん。</b>　')+q.e:''}</div>
+    </div>`;
+  };
+  panel.innerHTML=`
+    <div class="bar pkbar">
+      <div class="lead">ローマ字の書き方が正しいほうをタップして、○をつけよう。</div>
+      <span id="pkScore">${score()}</span>
+      <div class="rpg c-blue"><small>もんだい</small>${PICK.map((_,p)=>`<button class="${p===pkPg?'on':''} ${allOK(p)?'done':''}" data-p="${p}" aria-label="もんだい${p+1}">${p+1}</button>`).join('')}</div>
+      <button class="btn" id="pkReset">もう一度</button>
+    </div>
+    <div class="pk">${P.map(card).join('')}</div>`;
+  panel.querySelectorAll('.rpg button').forEach(b=>b.onclick=()=>{pkPg=+b.dataset.p;VIEWS.pick();});
+  $('#pkReset').onclick=()=>{pkAns=PICK.map(p=>p.map(()=>-1));pkPg=0;VIEWS.pick();};
+  panel.querySelectorAll('.pko').forEach(b=>b.onclick=()=>{
+    const c=b.closest('.pkcard'), i=+c.dataset.i, j=+b.dataset.j, q=P[i];
+    if(A[i]>=0)return;
+    A[i]=j;
+    if(j===q.a)pinpon(); else bubu();
+    c.outerHTML=card(q,i);
+    if(A.every(x=>x>=0)){
+      $('#pkScore').innerHTML=score();
+      if(allOK(pkPg)){ setTimeout(party,200); const pb=panel.querySelector('.rpg button[data-p="'+pkPg+'"]'); if(pb)pb.classList.add('done'); }
+    }
+    panel.querySelectorAll('.pkcard[data-i="'+i+'"] .pko').forEach(x=>x.onclick=null);
+  });
 };
 
 /* ---- 重要語句 ---- */
